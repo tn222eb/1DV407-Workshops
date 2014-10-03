@@ -7,6 +7,6 @@ $htmlView = new HTMLView();
 
 $MemberView = new \view\MemberView();
 
-$html = $MemberView->display();
+$html = $MemberView->doAdd();
 
 $htmlView->echoHTML($html);
