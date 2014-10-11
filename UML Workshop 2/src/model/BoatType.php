@@ -1,9 +1,12 @@
 <?php
 
-abstract class BoatType {
-	const Segelbåt = 0;
-	const Motorseglare = 1;
-	const Motorbåt = 2;
-	const Kanot = 3;
-	const Övrigt = 4;
+namespace model;
+
+class BoatType {
+
+	private $boatType = array("Segelbåt", "Motorseglare", "Motorbåt", "Kanot", "Kajak", "Övrigt");
+
+	public function getAllBoatType() {
+		return $this->boatType;
+	}
 }

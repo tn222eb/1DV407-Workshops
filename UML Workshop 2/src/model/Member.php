@@ -2,17 +2,27 @@
 
 namespace model;
 
+require_once("src/model/BoatList.php");
+
 class Member {
 	private $name;
 	private $socialNumber;
 	private $uniqueMemberId;
-	private $boats = array();
+	private $boats;
 
-	public function __construct($nameInput, $socialNumberInput) {
+	public function __construct($nameInput, $socialNumberInput, $uniqueMemberId = NULL) {
+
 		$this->name = $nameInput;
 		$this->socialNumber = $socialNumberInput;
-		$this->uniqueMemberId = $this->uniqueId();
 
+		if (empty($uniqueMemberId)) {
+			$this->uniqueMemberId = $this->uniqueId();	
+		}
+		else {
+			$this->uniqueMemberId = $uniqueMemberId;
+		}
+
+		$this->boats = new \model\BoatList();
 	}
 
 	public function uniqueId() {
@@ -29,5 +39,17 @@ class Member {
 
 	public function getUniqueId() {
 		return $this->uniqueMemberId;
+	}
+
+	public function add(\model\Boat $boat) {
+		$this->boats->add($boat);
+	}
+
+	public function getBoatList() {
+		return $this->boats;
+	}
+
+	public function countBoat() {
+		return count($this->boats->getBoats());
 	}
 }
