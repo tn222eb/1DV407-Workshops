@@ -4,7 +4,7 @@ namespace model;
 
 class BoatType {
 
-	private $boatType = array("Segelbåt", "Motorseglare", "Motorbåt", "Kanot", "Kajak", "Övrigt");
+	private $boatType = array("Sailboat", "Motorsailor", "Motorboat", "Canoe", "Kayak", "Other");
 
 	public function getAllBoatType() {
 		return $this->boatType;

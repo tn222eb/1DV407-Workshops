@@ -7,7 +7,7 @@ class MemberModel {
 	private $memberRepository;
 
 	public function __construct() {
-		$this->memberRepository = new \MemberRepository();
+		$this->memberRepository = new \model\MemberRepository();
 	}
 
 	public function getMember($socialNumber) {

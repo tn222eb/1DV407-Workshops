@@ -1,14 +1,16 @@
 <?php
 
+namespace model;
+
 require_once("src/model/Member.php");
 require_once("src/model/Repository.php");
 require_once("src/model/MemberList.php");
 
-
-class MemberRepository extends Repository {
+class MemberRepository extends \Repository {
 	private $name = 'Name';
 	private $socialNumber = 'SocialNumber';
 	private $uniqueMemberId = 'UniqueMemberId';
+	private $boatTable = 'boat';
 	private $db;
 	private $memberList;
 
@@ -63,7 +65,18 @@ class MemberRepository extends Repository {
 			$result = $query->fetch();
 
 			if ($result) {
-				return $member = new \model\Member($result[$this->name], $result[$this->socialNumber], $result[$this->uniqueMemberId]);
+				$member = new \model\Member($result[$this->name], $result[$this->socialNumber], $result[$this->uniqueMemberId]);
+
+				$sql = "SELECT * FROM " . $this->boatTable . " WHERE " . $this->uniqueMemberId . " = ?";
+				$query = $this->db->prepare($sql);
+				$query->execute (array($result[$this->uniqueMemberId]));
+				$boats = $query->fetchAll();
+
+				foreach($boats as $boat) {
+					$boat = new Boat($boat['BoatLength'], $boat['BoatType'], $boat['BoatUniqueId']);
+					$member->add($boat);
+				}
+				return $member;
 			}
 
 			return NULL;
@@ -72,7 +85,6 @@ class MemberRepository extends Repository {
 			echo $e;
 		}
 	}
-
 
 	public function GetMemberList() {
 		try {
@@ -84,7 +96,19 @@ class MemberRepository extends Repository {
 				$socialnumber = $member['SocialNumber'];
 				$unique = $member['UniqueMemberId'];
 				$member = new \model\Member($name, $socialnumber, $unique);
+
+				$sql = "SELECT * FROM " . $this->boatTable . " WHERE " . $this->uniqueMemberId . " = ?";
+				$query = $this->db->prepare($sql);
+				$query->execute (array($unique));
+				$boats = $query->fetchAll();
+
+				foreach($boats as $boat) {
+					$boat = new Boat($boat['BoatLength'], $boat['BoatType'], $boat['BoatUniqueId']);
+					$member->add($boat);
+				}
+
 				$this->memberList->add($member);
+
 			}
 			return $this->memberList;
 		} 
@@ -92,10 +116,4 @@ class MemberRepository extends Repository {
 			echo $e;
 		}
 	}
-
-
-
-
-
-
 }

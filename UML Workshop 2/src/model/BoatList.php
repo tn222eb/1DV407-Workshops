@@ -16,17 +16,6 @@ class BoatList {
 	}
 
 	public function add(\model\Boat $boat) {
-		if (!$this->exists($boat)) {
 			$this->boats[] = $boat;
-		}
-	}
-
-	public function exists(\model\Boat $boat) {
-		foreach($this->boats as $key => $value) {
-			if ($boat->exists($value)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

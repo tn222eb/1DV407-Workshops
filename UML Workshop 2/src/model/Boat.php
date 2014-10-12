@@ -8,8 +8,21 @@ class Boat {
 	private $boatType;
 	private $member;
 
-	public function equals(\model\Boat $other) {
-		return ($this->getName() == $other->getName() && $this->getUnique() == $this->getUnique());
+	public function __construct($boatLength, $boatType , $uniqueBoatId = NULL) {
+
+		$this->boatLength = $boatLength;
+		$this->boatType = $boatType;
+
+		if (empty($uniqueBoatId)) {
+			$this->uniqueBoatId = $this->uniqueId();	
+		}
+		else {
+			$this->uniqueBoatId = $uniqueBoatId;
+		}
+	}
+
+	public function uniqueId() {
+		return uniqid();
 	}
 
 	public function getBoatLength() {
