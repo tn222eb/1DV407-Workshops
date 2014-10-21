@@ -14,9 +14,9 @@ class MemberList {
 	}
 
 	public function add(\model\Member $Member) {
-		if (!$this->exists($Member)) {
+	//	if (!$this->exists($Member)) {
 			$this->memberList[] = $Member;
-		}
+	//	}
 	}
 
 	public function getMemberList() {

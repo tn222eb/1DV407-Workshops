@@ -3,32 +3,32 @@
 namespace view;
 
 require_once("src/model/Member.php");
-require_once("src/model/Boat.php");
 require_once("src/model/MemberRepository.php");
 require_once("src/model/MemberModel.php");
 require_once("src/model/MemberList.php");
+require_once("src/view/BoatView.php");
+require_once("src/view/ListView.php");
 require_once("src/model/BoatType.php");
-require_once("src/model/BoatModel.php");
 
 class MemberView {
 
 	private $name = "name";
-	private $boatType = "boatType";
-	private $boatLength = "boatLength";	
 	private $socialNumber = "socialNumber";
 	private $submitRegister = "submitRegister";
 	private $submitGetMember = "submitGetMember";
 	private $memberList;
 	private $memberModel;
 	private $memberRepository;
-	private $boatModel;
+	private $boatView;
+	private $listView;
 	private $boatTypeObject;
 
 	public function __construct() {
 		$this->memberModel = new \model\MemberModel();
 		$this->memberList = new \model\MemberList();
-		$this->boatModel = new \model\BoatModel();
 		$this->memberRepository = new \model\MemberRepository();
+	    $this->boatView = new\view\BoatView();
+	    $this->listView = new \view\ListView();
 	    $this->boatTypeObject = new \model\BoatType();
 	}
 
@@ -37,28 +37,28 @@ class MemberView {
 			return $this->doAddMember();
 		}
 
-		else if ($this->hasSubmitSaveEditBoat()) {
-			$this->doSaveEditBoat();
+		else if ($this->boatView->hasSubmitSaveEditBoat()) {
+			$this->boatView->doSaveEditBoat();
 		}
 
 		else if ($this->hasSubmitRemoveMember()) {
 			$this->doRemoveMember();
 		}
 
-		else if ($this->hasSubmitEditBoat()) {
-			return $this->doEditBoat();
+		else if ($this->boatView->hasSubmitEditBoat()) {
+			return $this->boatView->doEditBoat();
 		}		
 
-		else if ($this->hasRemoveBoat()) {
-			$this->doRemoveBoat();
+		else if ($this->boatView->hasRemoveBoat()) {
+			$this->boatView->doRemoveBoat();
 		}
 
-		else if ($this->hasSubmitAddBoat() || $this->hasSaveBoat()) {
-			if ($this->hasSaveBoat()) {
-				$this->doAddBoat();
+		else if ($this->boatView->hasSubmitAddBoat() || $this->boatView->hasSaveBoat()) {
+			if ($this->boatView->hasSaveBoat()) {
+				$this->boatView->doAddBoat();
 			}
 			else {
-				return $this->doShowAddBoat($this->memberModel->getMember($this->getSocialNumber()));
+				return $this->boatView->doShowAddBoat($this->memberModel->getMember($this->getSocialNumber()));
 			}
 		}
 
@@ -68,18 +68,18 @@ class MemberView {
 
 		else if ($this->hasSubmitEditMember()) {
 			return $this->doEditMember();
-		}
+		}	
 
 		else if ($this->hasChosenShowMember()) {
 			return $this->doShowMember();
 		}
 
-		else if ($this->hasChosenShowCompleteList()) {
-			return $this->doShowCompleteList($this->memberRepository->GetMemberList());
+		else if ($this->listView->hasChosenShowCompleteList()) {
+			return $this->listView->doShowCompleteList($this->memberRepository->GetMemberList());
 		}
 
-		else if ($this->hasChosenShowCompactList()) {
-			return $this->doShowCompactList($this->memberRepository->GetMemberList());
+		else if ($this->listView->hasChosenShowCompactList()) {
+			return $this->listView->doShowCompactList($this->memberRepository->GetMemberList());
 		}
 
 		else {
@@ -98,19 +98,7 @@ class MemberView {
 		";
 	}
 
-	public function hasChosenShowCompactList() {
-		if (isset($_GET['showCompactList'])) {
-			return true;
-		}
-		return false;
-	}
-
-	public function hasChosenShowCompleteList() {
-		if (isset($_GET['showCompleteList'])) {
-			return true;
-		}
-		return false;
-	}
+	
 
 	public function hasChosenAddMember() {
 		if (isset($_GET['addMember'])) {
@@ -141,86 +129,8 @@ class MemberView {
 		return false;
 	}
 
-	public function hasSubmitEditBoat() {
-		if (isset($_POST['editBoat'])) {
-			return true;
-		}
-		return false;
-	}	
 
-
-	public function doShowAddBoat(\model\Member $member) {
-		
-		$boatTypes = $this->boatTypeObject->getAllBoatType();
-		$boatTypeLocation = "";
-		foreach ($boatTypes as $key =>$boatType) {
-			$boatTypeLocation .= "<input type='radio' name='boatType' value='$key'> <label for='boatType'>$boatType</label>";
-		}
-
-		return $html = "
-		<a href='?showMember' name='returnToPage'>Go back</a>
-		</br>
-		</br>
-		<form action='' method='post'>
-		<input type='hidden' name='$this->socialNumber' value='" . $member->getMemberSocialNumber() . "'>
-		<h1>Add Boat for " . $member->getMemberName() . "</h1>
-		Boat Type:
-		</br>
-		$boatTypeLocation
-		</br>
-		</br>
-		Boat Length:
-		</br>
-		<input type='text' name='" . $this->boatLength . "'>
-		</br>
-		</br>
-		<input type='submit' name='saveBoat' value='Add Boat'>
-		</form>
-		";
-	}	
-
-	public function doShowCompactList(\model\MemberList $memberList) {
-
-		$ret = "
-		<a href='?' name='returnPage'>Go to menu</a>
-		<h1>CompactList</h1>";
-		$ret .= "<ol>";
-		foreach ($memberList->getMemberList() as $member) {
-			$ret .= "<li>
-			Name: " . $member->getMemberName() . "</br> MemberId: " .  $member->getUniqueId() . "</br> Boats: " . $member->countBoat() . "
-			</br>
-			</br>
-			</<li>";
-		}
-		$ret .= "</ol>";
-		return $ret;
-	}
-
-	public function doShowCompleteList(\model\MemberList $memberList) {
-		$boatTypes = $this->boatTypeObject->getAllBoatType();
-
-		$ret = "
-		<a href='?' name='returnPage'>Go to menu</a>
-		<h1>CompleteList</h1>";
-		$ret .= "<ol>";
-		foreach ($memberList->getMemberList() as $member) {
-			$boatList = $member->getBoatList();
-			$boats = $boatList->getBoats();
-
-			$ret .= "<li>Name: " . $member->getMemberName() . "</br> SocialNumber: " .  $member->getMemberSocialNumber() . "</br> MemberId: " . $member->getUniqueId() . "</br><h4>Boats:</h4>";
-
-			foreach ($boats as $boat) {
-				$ret .= "
-				BoatId: " . $boat->getBoatUniqueId() . " </br>
-				BoatLength: " . $boat->getBoatLength() . " </br> BoatType: " . $boatTypes[$boat->getBoatType()] . "
-				</br>
-				</br>
-				</<li>";
-			}
-		}
-		$ret .= "</ol>";
-		return $ret;
-	}	
+	
 
 	public function doAddMember() {
 		if ($this->hasSubmitRegisterForm()) {
@@ -244,11 +154,7 @@ class MemberView {
 		header("Location: ");
 	}
 
-	public function doEditBoat() {
-		$boat = $this->boatModel->getBoat($this->getHiddenBoatId());
-
-		return $this->doShowEditBoat($boat);
-	}
+	
 	public function doEditMember() {
 		$member = $this->memberModel->getMember($this->getSocialNumber());
 
@@ -321,16 +227,6 @@ class MemberView {
 		return $this->showGetMemberForm();
 	}
 
-	public function getHiddenBoatId() {
-		return $_POST['hiddenBoatId'];
-	}
-
-	public function hasSubmitAddBoat() {
-		if (isset($_POST['addBoat'])) {
-			return true;
-		}
-		return false;
-	}
 
 	public function hasSubmitGetMember() {
 		if (isset($_POST[$this->submitGetMember])) {
@@ -407,95 +303,9 @@ class MemberView {
 		return $_POST['uniqueMemberId'];
 	}
 
-
-
-	public function hasSaveBoat() {
-		if (isset($_POST['saveBoat'])) {
-			return true;
-		}
-		return false;
+	public function getHiddenBoatId() {
+		return $_POST['hiddenBoatId'];
 	}
 
 
-	public function hasRemoveBoat() {
-		if (isset($_POST['removeBoat'])) {
-			return true;
-		}
-		return false;
-	}	
-
-	public function getBoatLength() {
-		if(isset($_POST[$this->boatLength])) {
-			return $_POST[$this->boatLength];
-		}
-	}
-
-	public function getBoatType() {
-		if(isset($_POST['boatType'])) {
-			return $_POST['boatType'];
-		}
-	}
-
-	public function doAddBoat() {
-			$boat = new \model\Boat($this->getBoatLength(), $this->getBoatType());
-			$boat->setMember($this->memberModel->getMember($this->getSocialNumber()));
-			$member = $boat->getMember();
-
-			$this->boatModel->addBoat($boat);
-			header("Location: ");
-	}
-
-	public function doRemoveBoat() {
-		$boat = $this->boatModel->getBoat($this->getHiddenBoatId());
-		$this->boatModel->removeBoat($boat);
-
-		header("Location: ");
-	}
-
-	public function doShowEditBoat($boat) {
-		$boatTypes = $this->boatTypeObject->getAllBoatType();
-		$boatTypeLocation = "";
-		foreach ($boatTypes as $key =>$boatType) {
-			if ($boat->getBoatType() == $key) {
-				$boatTypeLocation .= "<input type='radio' name='$this->boatType' value='$key' checked> <label for='boatType'>$boatType</label>";				
-			}
-			else {
-				$boatTypeLocation .= "<input type='radio' name='$this->boatType' value='$key'> <label for='boatType'>$boatType</label>";
-			}
-		}
-
-		return $html = "
-		<form action ='' method='post'>
-		<a href='?showMember' name='returnToPage'>Go back</a>
-		</br>
-		</br>
-		<form action='' method='post'>
-		<h1>Edit Boat</h1>
-		BoatType:
-		</br>
-		$boatTypeLocation
-		</br>
-		</br>
-
-		BoatLength:
-		<input type='text' name='$this->boatLength' value='". $boat->getBoatLength() ."'>
-		<input type='hidden' name='hiddenBoatId' value='" . $boat->getBoatUniqueId() . "' />
-		<input type='submit' name='saveEditBoat' value='Save'>
-		</form>
-		";
-	}
-
-	public function hasSubmitSaveEditBoat() {
-		if (isset($_POST['saveEditBoat'])) {
-			return true;
-		}
-		return false;
-	}
-
-	public function doSaveEditBoat() {
-		$boat = new \model\Boat($this->getBoatLength(), $this->getBoatType(), $this->getHiddenBoatId());
-		$this->boatModel->saveEditBoat($boat);
-
-		header("Location: ");
-	}	
 }
