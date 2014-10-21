@@ -61,7 +61,7 @@
 			$boat = new \model\Boat($this->getBoatLength(), $this->getBoatType(), $this->getHiddenBoatId());
 			$this->boatModel->saveEditBoat($boat);
 
-			header("Location: ");
+			header("Location:" .$_SERVER['PHP_SELF']);
 		}	
 		
 		public function doAddBoat() {
@@ -70,14 +70,14 @@
 				$member = $boat->getMember();
 
 				$this->boatModel->addBoat($boat);
-				header("Location: ");
+				header("Location:" .$_SERVER['PHP_SELF']);
 		}
 
 		public function doRemoveBoat() {
 			$boat = $this->boatModel->getBoat($this->getHiddenBoatId());
 			$this->boatModel->removeBoat($boat);
 
-			header("Location: ");
+			header("Location:" .$_SERVER['PHP_SELF']);
 		}
 
 		public function doShowEditBoat($boat) {

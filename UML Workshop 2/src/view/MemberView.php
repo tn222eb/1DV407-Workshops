@@ -144,14 +144,14 @@ class MemberView {
 		$member = $this->memberModel->getMember($this->getSocialNumber());
 		$this->memberModel->removeMember($member);
 
-		header("Location: ");
+		header("Location:" .$_SERVER['PHP_SELF']);
 	}
 
 	public function doSaveEditMember() {
 		$member = new \model\Member($this->getName(), $this->getSocialNumber(), $this->getUniqueMemberId());
 		$this->memberModel->saveEditMember($member);
 
-		header("Location: ");
+		header("Location: " .$_SERVER['PHP_SELF']);
 	}
 
 	
