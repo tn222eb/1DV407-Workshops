@@ -20,10 +20,8 @@ class BoatRepository extends \Repository {
 
 	public function addBoat(\model\Boat $boat) {
 		try {
-
-			$member = $boat->getMember();
 			$sql = "INSERT INTO $this->dbTable (". $this->BoatLength .", ". $this->BoatType. ", " . $this->UniqueMemberId . ", " . $this->BoatUniqueId . " ) VALUES (?,?,?,?)";
-			$params = array($boat->getBoatLength(), $boat->getBoatType() , $member->getUniqueId(), $boat->getBoatUniqueId());
+			$params = array($boat->getBoatLength(), $boat->getBoatType() , $boat->getUniqueMemberId(), $boat->getBoatUniqueId());
 			$query = $this->db->prepare($sql);
 			$query->execute($params);
 		}
@@ -65,7 +63,7 @@ class BoatRepository extends \Repository {
 			$result = $query->fetch();
 
 			if ($result) {
-				return $boat = new \model\Boat($result[$this->BoatLength], $result[$this->BoatType], $result[$this->BoatUniqueId]);
+				return $boat = new \model\Boat($result[$this->BoatLength], $result[$this->BoatType], $result[$this->getUniqueMemberId], $result[$this->BoatUniqueId]);
 			}
 
 			return NULL;

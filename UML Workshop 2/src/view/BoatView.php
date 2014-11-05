@@ -13,13 +13,13 @@
 		private $boatTypeObject;
 		private $socialNumber = "socialNumber";
 		private $memberModel;
+		private $uniqueMemberId = "uniqueMemberId";
 
 		public function __construct() {
 			$this->boatModel = new \model\BoatModel();
 			$this->boatTypeObject = new \model\BoatType();
 			$this->memberModel = new \model\MemberModel();
 		}
-
 
 		public function doShowAddBoat(\model\Member $member) {
 		
@@ -34,7 +34,7 @@
 			</br>
 			</br>
 			<form action='' method='post'>
-			<input type='hidden' name='$this->socialNumber' value='" . $member->getMemberSocialNumber() . "'>
+			<input type='hidden' name='$this->uniqueMemberId' value='" . $member->getUniqueId() . "'>
 			<h1>Add Boat for " . $member->getMemberName() . "</h1>
 			Boat Type:
 			</br>
@@ -49,7 +49,13 @@
 			<input type='submit' name='saveBoat' value='Add Boat'>
 			</form>
 			";
-		}	
+		}
+
+		public function getUniqueMemberId() {
+			if (isset($_POST[$this->uniqueMemberId])) {
+				return $_POST[$this->uniqueMemberId];
+			}
+		}
 
 		public function getSocialNumber() {
 			if (isset($_POST[$this->socialNumber])) {
@@ -61,23 +67,20 @@
 			$boat = new \model\Boat($this->getBoatLength(), $this->getBoatType(), $this->getHiddenBoatId());
 			$this->boatModel->saveEditBoat($boat);
 
-			header("Location:" .$_SERVER['PHP_SELF']);
+			header("Location:" . $_SERVER['PHP_SELF']);
 		}	
 		
 		public function doAddBoat() {
-				$boat = new \model\Boat($this->getBoatLength(), $this->getBoatType());
-				$boat->setMember($this->memberModel->getMember($this->getSocialNumber()));
-				$member = $boat->getMember();
-
+				$boat = new \model\Boat($this->getBoatLength(), $this->getBoatType(), $this->getUniqueMemberId());
 				$this->boatModel->addBoat($boat);
-				header("Location:" .$_SERVER['PHP_SELF']);
+				header("Location:" . $_SERVER['PHP_SELF']);
 		}
 
 		public function doRemoveBoat() {
 			$boat = $this->boatModel->getBoat($this->getHiddenBoatId());
 			$this->boatModel->removeBoat($boat);
 
-			header("Location:" .$_SERVER['PHP_SELF']);
+			header("Location:" . $_SERVER['PHP_SELF']);
 		}
 
 		public function doShowEditBoat($boat) {

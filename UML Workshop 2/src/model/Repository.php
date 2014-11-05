@@ -4,7 +4,7 @@ abstract class Repository {
 
 	protected $dbUsername = "root";
 	protected $dbPassword = "";
-	protected $dbConnectionString = "mysql:host=127.0.0.1;dbname=198897-workshop";
+	protected $dbConnectionString = "mysql:host=127.0.0.1;dbname=workshop2";
 	protected $dbConnection;
     protected $dbTable;
 

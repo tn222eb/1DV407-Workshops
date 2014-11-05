@@ -6,12 +6,13 @@ class Boat {
 	private $boatLength;
 	private $uniqueBoatId;
 	private $boatType;
-	private $member;
+	private $uniqueMemberId;
 
-	public function __construct($boatLength, $boatType , $uniqueBoatId = NULL) {
+	public function __construct($boatLength, $boatType, $uniqueMemberId , $uniqueBoatId = NULL) {
 
 		$this->boatLength = $boatLength;
 		$this->boatType = $boatType;
+		$this->uniqueMemberId = $uniqueMemberId;
 
 		if (empty($uniqueBoatId)) {
 			$this->uniqueBoatId = $this->uniqueId();	
@@ -33,12 +34,8 @@ class Boat {
 		return $this->uniqueBoatId;
 	}
 
-	public function setMember(\model\Member $member) {
-		$this->member = $member;
-	}
-
-	public function getMember() {
-		return $this->member;
+	public function getUniqueMemberId() {
+		return $this->uniqueMemberId;
 	}
 
 	public function getBoatType() {
